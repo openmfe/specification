@@ -180,7 +180,7 @@ Version `1.0`
 
 **8.3.8**  `description`: A string with a brief description of the microfrontend, 100 to 300 characters long. It MAY use inline Markdown.
 
-**8.3.9**  `documentation`: A URL to a Markdown file which explains the functionality of the microfrontend in two to four paragraphs in a non-technical way from the business value perspective.
+**8.3.9**  `documentation`: A URL to a Markdown file which explains the functionality of the microfrontend in two to four paragraphs in a non-technical way from the business/customer value perspective.
 
 **8.3.10**  `attributes`: A list of objects, where every object describes one attribute on the microfrontend element. Each object MUST contain the following properties:
 
@@ -213,3 +213,5 @@ Version `1.0`
 **8.3.14.1**  `examples[x].description`: A string containing a description of the example, 20 to 300 characters long. It MAY use inline Markdown.
 
 **8.3.14.2**  `examples[x].attributes`: An object where each key is an attribute name and each value is an attribute value.
+
+**8.3.15**  `repository`: A URL to the Git (or other version control system) repository.
