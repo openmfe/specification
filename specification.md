@@ -82,7 +82,7 @@ Version `1.0`
 
 **4.5**  Configuration attributes MUST NOT be prefixed with `data-`.
 
-**5  Communication**
+**5  Events**
 
 **5.1**  If the microfrontend web component offers outbound communication, this MUST happen through CustomEvents, as specified in the [W3C DOM standard](https://dom.spec.whatwg.org/#interface-customevent).
 
@@ -96,122 +96,162 @@ Version `1.0`
 
 **5.6**  If the microfrontend web component creates resources the scope of the host page, such as local/session storage, it MUST namespace the identifiers for the resources it creates. The same namespacing rules as for event names apply, as far as the syntax for identifiers of the given resource permit.
 
-**5.7**  For the purposes of analytics, the microfrontend MUST use a standardised format to emit tracking events to its environment.
+**5.7**  The microfrontend MUST NOT listen to incoming events from the environment in any way.
 
-**5.7.1**  The name of the tracking event MUST be `openmfe.analytics`. The microfrontend MAY send different events with the name `openmfe.analytics`; the actual analytics event name will be derived from the payload as described below.
+**5.8**  For the purposes of analytics, the microfrontend MUST use a standardised format to emit tracking events to its environment.
 
-**5.7.2**  The `detail` object of the CustomEvent must be an object containing the following properties:
+**5.8.1**  The name of the tracking event MUST be `openmfe.analytics`. The microfrontend MAY send different events with the name `openmfe.analytics`; the actual analytics event name will be derived from the payload as described below.
 
-**5.7.2.1**  The `detail.name` property MUST contain the name of the tracking event.
+**5.8.2**  The `detail` object of the CustomEvent must be an object containing the following properties:
 
-**5.7.2.2**  The `detail.origin` property MUST contain the tag name of the microfrontend itself.
+**5.8.2.1**  The `detail.name` property MUST contain the name of the tracking event.
 
-**5.7.2.3**  The `detail.id` property MUST contain the `id` attribute of the microfrontend element, or `null` if not applicable.
+**5.8.2.2**  The `detail.origin` property MUST contain the tag name of the microfrontend itself.
 
-**5.7.2.4**  The `detail.variant` property MUST contain the `variant` name of the microfrontend in case of an A/B test, or `null` if not applicable.
+**5.8.2.3**  The `detail.id` property MUST contain the `id` attribute of the microfrontend element, or `null` if not applicable.
 
-**5.7.2.5**  The `detail.action` property MUST contain a short description of the activity that caused the event.
+**5.8.2.4**  The `detail.variant` property MUST contain the `variant` name of the microfrontend in case of an A/B test, or `null` if not applicable.
 
-**5.7.2.6**  The `detail.category` property MUST contain an identifier for a group of events, or `null` if not applicable.
+**5.8.2.5**  The `detail.action` property MUST contain a short description of the activity that caused the event.
 
-**5.7.2.7**  The `detail.data` property MUST contain the tracking payload.
+**5.8.2.6**  The `detail.category` property MUST contain an identifier for a group of events, or `null` if not applicable.
 
-**5.7.3**  The `openmfe.analytics` event MUST be documented in the manifest file as described below.
+**5.8.2.7**  The `detail.data` property MUST contain the tracking payload.
 
-**6  Prerender Endpoint**
+**5.8.3**  The `openmfe.analytics` event MUST be documented in the manifest file as described below.
 
-**6.1**  The microfrontend MUST provide a webservice endpoint which allows prerendering the inner HTML of the web component. The endpoint MUST adhere to the following rules.
+**6  Functions**
 
-**6.2**  The endpoint MUST be publicly available via HTTPS.
+**6.1**  The microfrontend MAY offer public functions that can be called by the host environment as methods on a microfrontend instance.
 
-**6.3**  If the microfrontend's web component accepts configuration attributes, the endpoint MUST accept the same attributes as GET parameters. The response to this request MUST generate the HTML that is expected to be combined with an instance of the web component with the same configuration.
+**6.2**  A function can be synchronous or asynchronous.
 
-**6.4**  The endpoint MUST be prepared to be used as an Edge Side Include. The endpoint MUST send appropriate caching headers for the given request.
+**6.3**  A function call MUST only refer to a particular instance of the microfrontend and not affect other concurrent instances in any way.
 
-**6.5**  The generated output MUST be embeddable into the \<body\> element of an HMTL document. The containing element must be a block element.
+**6.4**  A function MUST NOT be used for configuring the microfrontend.
 
-**6.6**  IF the generated output contains class attributes, the class names must be prefixed with the name of the microfrontend tag.
+**6.5**  A function MUST NOT expect callbacks as input parameters and MUST NOT return callbacks.
 
-**6.7**  The generated output MUST NOT reference external resources.
+**7  Prerender Endpoint**
 
-**7  Semantic Endpoint**
+**7.1**  The microfrontend MUST provide a webservice endpoint which allows prerendering the inner HTML of the web component. The endpoint MUST adhere to the following rules.
 
-**7.1**  The microfrontend SHOULD provide a webservice endpoint which returns semantic information about microfrontend contents, matching the state of a microfrontend based on its configuration. IF such an endpoint is present, it MUST adhere to the following rules.
+**7.2**  The endpoint MUST be publicly available via HTTPS.
 
-**7.2**  The endpoint MUST be available via HTTPS.
+**7.3**  If the microfrontend's web component accepts configuration attributes, the endpoint MUST accept the same attributes as GET parameters. The response to this request MUST generate the HTML that is expected to be combined with an instance of the web component with the same configuration.
 
-**7.3**  If the microfrontend's web component accepts configuration attributes, the endpoint MUST accept the same attributes as GET parameters. The response to this request MUST generate semantic information that can be combined with an instance of the web component with the same configuration.
+**7.4**  The endpoint MUST be prepared to be used as an Edge Side Include. The endpoint MUST send appropriate caching headers for the given request.
 
-**7.4**  The semantic information must be compliant with the JSON-LD specification and produce a JSON object in the "compacted" format.
+**7.5**  The generated output MUST be embeddable into the \<body\> element of an HMTL document. The containing element must be a block element.
 
-**7.5**  The data provided by the endpoint MUST be cachable for at least two weeks; meaning that MUST NOT be likely to become stale within this period of time.
+**7.6**  IF the generated output contains class attributes, the class names must be prefixed with the name of the microfrontend tag.
 
-**8  Manifest**
+**7.7**  The generated output MUST NOT reference external resources.
 
-**8.1**  The microfrontend MUST expose a manifest file at runtime under a publically accessible URL.
+**8  Semantic Endpoint**
 
-**8.2**  The manifest file MUST be a valid YAML file.
+**8.1**  The microfrontend SHOULD provide a webservice endpoint which returns semantic information about microfrontend contents, matching the state of a microfrontend based on its configuration. IF such an endpoint is present, it MUST adhere to the following rules.
 
-**8.3**  The manifest file MUST contain the following fields:
+**8.2**  The endpoint MUST be available via HTTPS.
 
-**8.3.1**  `version`: A string containing the version number of the specification by which this microfrontend is built (found at the top of this specification). The version field SHOULD be the first entry in the manifest file.
+**8.3**  If the microfrontend's web component accepts configuration attributes, the endpoint MUST accept the same attributes as GET parameters. The response to this request MUST generate semantic information that can be combined with an instance of the web component with the same configuration.
 
-**8.3.2**  `name`: A string containing the name of the microfrontend, five to 50 characters long.
+**8.4**  The semantic information must be compliant with the JSON-LD specification and produce a JSON object in the "compacted" format.
 
-**8.3.3**  `source`: The URL from which the JavaScript file with the web component can be loaded.
+**8.5**  The data provided by the endpoint MUST be cachable for at least two weeks; meaning that MUST NOT be likely to become stale within this period of time.
 
-**8.3.4**  `url`: An object containing the URLs to different endpoints:
+**9  Manifest**
 
-**8.3.4.1**  `url.frontend`: The URL from which the JavaScript file with the web component can be loaded.
+**9.1**  The microfrontend MUST expose a manifest file at runtime under a publically accessible URL.
 
-**8.3.4.2**  `url.prerender`: The URL to the prerender endpoint.
+**9.2**  The manifest file MUST be a valid YAML file.
 
-**8.3.4.3**  `url.semantic`: The URL to the semantic endpoint. IF no semantic endpoint is present, this field MUST be omitted or set to null.
+**9.3**  The manifest file MUST contain the following fields:
 
-**8.3.5**  `tag`: The custom element tag name of the microfrontend.
+**9.3.1**  `version`: A string containing the version number of the specification by which this microfrontend is built (found at the top of this specification). The version field SHOULD be the first entry in the manifest file.
 
-**8.3.6**  `publisher`: An object with details about the publishing entity of the microfrontend.
+**9.3.2**  `name`: A string containing the name of the microfrontend, five to 50 characters long.
 
-**8.3.6.1**  `publisher.name`: The name of the publisher, five to 50 characters long.
+**9.3.3**  `source`: The URL from which the JavaScript file with the web component can be loaded.
 
-**8.3.6.2**  `publisher.email`: An e-mail address to contact the publisher.
+**9.3.4**  `url`: An object containing the URLs to different endpoints:
 
-**8.3.7**  `icon`: A URL to an SVG image file. The image MUST be square, and SHOULD be expected to be used against a white or light-grey background. It MUST not contain embedded scripts or animations. Styles SHOULD be expressed as native SVG properties rather than through CSS.
+**9.3.4.1**  `url.frontend`: The URL from which the JavaScript file with the web component can be loaded.
 
-**8.3.8**  `description`: A string with a brief description of the microfrontend, 100 to 300 characters long. It MAY use inline Markdown.
+**9.3.4.2**  `url.prerender`: The URL to the prerender endpoint.
 
-**8.3.9**  `documentation`: A URL to a Markdown file which explains the functionality of the microfrontend in two to four paragraphs in a non-technical way from the business/customer value perspective.
+**9.3.4.3**  `url.semantic`: The URL to the semantic endpoint. IF no semantic endpoint is present, this field MUST be omitted or set to null.
 
-**8.3.10**  `attributes`: A list of objects, where every object describes one attribute on the microfrontend element. Each object MUST contain the following properties:
+**9.3.5**  `tag`: The custom element tag name of the microfrontend.
 
-**8.3.10.1**  `attributes[x].name`: A string indicating the attribute name, 1 to 50 characters long and only using lowercase latin letters and dashes.
+**9.3.6**  `publisher`: An object with details about the publishing entity of the microfrontend.
 
-**8.3.10.2**  `attributes[x].description`: A string containing a short description of the function of the attribute, 10 to 300 characters long. It MAY use inline Markdown.
+**9.3.6.1**  `publisher.name`: The name of the publisher, five to 50 characters long.
 
-**8.3.10.3**  `attributes[x].required`: A boolean indicating whether or not the attribute must be present at the initialisation of the microfrontend.
+**9.3.6.2**  `publisher.email`: An e-mail address to contact the publisher.
 
-**8.3.10.4**  `attributes[x].schema`: A JSON Schema structure, describing the type and constraints of the attribute. If the type is not string it will be assumed that the value is a serialised JSON string.
+**9.3.7**  `icon`: A URL to an SVG image file. The image MUST be square, and SHOULD be expected to be used against a white or light-grey background. It MUST not contain embedded scripts or animations. Styles SHOULD be expressed as native SVG properties rather than through CSS.
 
-**8.3.11**  `events`: An array of objects, where every object describes one attribute on the microfrontend element. Each object MUST contain the following properties:
+**9.3.8**  `description`: A string with a brief description of the microfrontend, 100 to 300 characters long. It MAY use inline Markdown.
 
-**8.3.11.1**  `events[x].name`: A string indicating the attribute name, 1 to 50 characters long and only using lowercase latin letters and dashes.
+**9.3.9**  `documentation` (optional): A URL to a Markdown file which explains the functionality of the microfrontend in two to four paragraphs in a non-technical way from the business/customer value perspective.
 
-**8.3.11.2**  `events[x].description`: A string containing a short description of the function of the attribute, 10 to 300 characters long. It MAY use inline Markdown.
+**9.3.10**  `attributes` (optional): A list of objects, where every object describes one attribute on the microfrontend element. Each object MUST contain the following properties:
 
-**8.3.11.3**  `events[x].schema`: A JSON Schema structure, describing the type and constraints of the detail property of the event.
+**9.3.10.1**  `attributes[x].name`: A string indicating the attribute name, 1 to 50 characters long and only using lowercase latin letters and dashes.
 
-**8.3.12**  `semantic`: A JSON Schema structure, describing the JSON-LD output of the semantic endpoint.
+**9.3.10.2**  `attributes[x].description`: A string containing a short description of the attribute, 10 to 300 characters long. It MAY use inline Markdown.
 
-**8.3.13**  `screenshots`: An array of objects, where every object refers to a screenshot of the rendered microfrontend. The array MUST have at least one entry. Each object in the array MUST contain the following properties:
+**9.3.10.3**  `attributes[x].required`: A boolean indicating whether or not the attribute must be present at the initialisation of the microfrontend.
 
-**8.3.13.1**  `screenshots[x].url`: A URL to an image file containing a screenshot of the microfrontend's UI. The image MUST be in PNG, JPEG or WEBP format.
+**9.3.10.4**  `attributes[x].schema`: A JSON Schema structure, describing the type and constraints of the attribute. If the type is not string it will be assumed that the value is a serialised JSON string.
 
-**8.3.13.2**  `screenshots[x].description`: A string containing a description of the image (to be used as a caption or similar), 10 to 150 characters long. It MAY use inline Markdown.
+**9.3.11**  `events` (optional): An array of objects, where every object describes one event on the microfrontend element. Each object MUST contain the following properties:
 
-**8.3.14**  `examples`: An array of objects, where every object is an example of a real configuration to create a fully working instance of the microfrontend. The array MUST have at least one entry. Each object in the array MUST contain the following properties:
+**9.3.11.1**  `events[x].name`: A string indicating the event name, 1 to 50 characters long and only using lowercase latin letters and dashes.
 
-**8.3.14.1**  `examples[x].description`: A string containing a description of the example, 20 to 300 characters long. It MAY use inline Markdown.
+**9.3.11.2**  `events[x].description`: A string containing a short description of the event, 10 to 300 characters long. It MAY use inline Markdown.
 
-**8.3.14.2**  `examples[x].attributes`: An object where each key is an attribute name and each value is an attribute value.
+**9.3.11.3**  `events[x].schema`: A JSON Schema structure, describing the type and constraints of the `detail` property of the event.
 
-**8.3.15**  `repository`: A URL to the Git (or other version control system) repository.
+**9.3.12**  `functions` (optional): An array of objects, where every object describes one attribute on the microfrontend element. Each object MUST contain the following properties:
+
+**9.3.12.1**  `functions[x].name`: A string indicating the function name, 1 to 50 characters long and only using latin letters and numbers.
+
+**9.3.12.2**  `functions[x].description`: A string containing a short description of the function, 10 to 300 characters long. It MAY use inline Markdown.
+
+**9.3.12.3**  `functions[x].async` (optional): A boolean indicating whether or not the function is asynchronous.
+
+**9.3.12.4**  `functions[x].parameters`: An array of objects, where every object describes one parameter to the function. Each object MUST contain the following properties:
+
+**9.3.12.4.1**  `functions[x].parameters[x].name`: A string indicating the parameter name, 1 to 50 characters long and only using lowercase latin letters and dashes.
+
+**9.3.12.4.2**  `functions[x].parameters[x].description`: A string containing a short description of the parameter, 10 to 300 characters long. It MAY use inline Markdown.
+
+**9.3.12.4.3**  `functions[x].parameters[x].required`: A boolean indicating whether or not the parameter must be set.
+
+**9.3.12.4.4**  `functions[x].parameters[x].default` (optional): If the parameter is not required, this value will be used as default.
+
+**9.3.12.4.5**  `functions[x].parameters[x].schema`: A JSON Schema structure, describing the type and constraints of the detail property of the parameter.
+
+**9.3.12.5**  `functions[x].return`: An object describing the return value from the function, containing the following properties:
+
+**9.3.12.5.1**  `functions[x].return.description`: A string containing a short description of the return value, 10 to 300 characters long. It MAY use inline Markdown.
+
+**9.3.12.5.2**  `functions[x].return.schema` (optional): A JSON Schema structure, describing the return value in detail. If the function does not return data, this field MUST be omitted.
+
+**9.3.13**  `semantic` (optional): A JSON Schema structure, describing the JSON-LD output of the semantic endpoint.
+
+**9.3.14**  `screenshots`: An array of objects, where every object refers to a screenshot of the rendered microfrontend. The array MUST have at least one entry. Each object in the array MUST contain the following properties:
+
+**9.3.14.1**  `screenshots[x].url`: A URL to an image file containing a screenshot of the microfrontend's UI. The image MUST be in PNG, JPEG or WEBP format.
+
+**9.3.14.2**  `screenshots[x].description`: A string containing a description of the image (to be used as a caption or similar), 10 to 150 characters long. It MAY use inline Markdown.
+
+**9.3.15**  `examples`: An array of objects, where every object is an example of a real configuration to create a fully working instance of the microfrontend. The array MUST have at least one entry. Each object in the array MUST contain the following properties:
+
+**9.3.15.1**  `examples[x].description`: A string containing a description of the example, 20 to 300 characters long. It MAY use inline Markdown.
+
+**9.3.15.2**  `examples[x].attributes`: An object where each key is an attribute name and each value is an attribute value.
+
+**9.3.16**  `repository` (optional): A URL to the Git (or other version control system) repository.
