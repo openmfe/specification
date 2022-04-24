@@ -180,7 +180,7 @@ Version `1.1`
 
 **9.3.4.2**  `url.prerender`: The URL to the prerender endpoint.
 
-**9.3.4.3**  `url.semantic`: The URL to the semantic endpoint. IF no semantic endpoint is present, this field MUST be omitted or set to null.
+**9.3.4.3**  `url.semantic` (optional): The URL to the semantic endpoint, if available.
 
 **9.3.5**  `tag`: The custom element tag name of the microfrontend.
 
