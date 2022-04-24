@@ -1,6 +1,6 @@
 # The OpenMFE Microfrontend Specification
 
-Version `1.0`
+Version `1.1`
 
 *This specification document describes mandatory traits which a microfrontend following the OpenMFE standard must expose. At the same time, it acknowledges that microfrontends can be built in different ways, many of which are not covered by this specification. The term "microfrontend" in the scope of this document only refers to applications which aim to be compliant with the specification.*
 
