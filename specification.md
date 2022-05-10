@@ -234,11 +234,11 @@ Version `1.1`
 
 **9.3.12.4.5**  `functions[x].parameters[x].schema`: A JSON Schema structure, describing the type and constraints of the detail property of the parameter.
 
-**9.3.12.5**  `functions[x].return`: An object describing the return value from the function, containing the following properties:
+**9.3.12.5**  `functions[x].return` (optional): If the function returns data, this field contains an object with the following properties:
 
 **9.3.12.5.1**  `functions[x].return.description`: A string containing a short description of the return value, 10 to 300 characters long. It MAY use inline Markdown.
 
-**9.3.12.5.2**  `functions[x].return.schema` (optional): A JSON Schema structure, describing the return value in detail. If the function does not return data, this field MUST be omitted.
+**9.3.12.5.2**  `functions[x].return.schema`: A JSON Schema structure, describing the return value in detail.
 
 **9.3.13**  `semantic` (optional): A JSON Schema structure, describing the JSON-LD output of the semantic endpoint.
 
